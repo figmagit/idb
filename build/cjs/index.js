@@ -43,6 +43,15 @@ function deleteDB(name, { blocked } = {}) {
     return wrapIdbValue.wrap(request).then(() => undefined);
 }
 
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 const readMethods = ['get', 'getKey', 'getAll', 'getAllKeys', 'count'];
 const writeMethods = ['put', 'add', 'delete', 'clear'];
 const cachedMethods = new Map();
@@ -63,25 +72,23 @@ function getMethod(target, prop) {
         !(isWrite || readMethods.includes(targetFuncName))) {
         return;
     }
-    const method = async function (storeName, ...args) {
-        // isWrite ? 'readwrite' : undefined gzipps better, but fails in Edge :(
-        const tx = this.transaction(storeName, isWrite ? 'readwrite' : 'readonly');
-        let target = tx.store;
-        if (useIndex)
-            target = target.index(args.shift());
-        const returnVal = await target[targetFuncName](...args);
-        if (isWrite)
-            await tx.done;
-        return returnVal;
+    const method = function (storeName, ...args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // isWrite ? 'readwrite' : undefined gzipps better, but fails in Edge :(
+            const tx = this.transaction(storeName, isWrite ? 'readwrite' : 'readonly');
+            let target = tx.store;
+            if (useIndex)
+                target = target.index(args.shift());
+            const returnVal = yield target[targetFuncName](...args);
+            if (isWrite)
+                yield tx.done;
+            return returnVal;
+        });
     };
     cachedMethods.set(prop, method);
     return method;
 }
-wrapIdbValue.replaceTraps((oldTraps) => ({
-    ...oldTraps,
-    get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
-    has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop),
-}));
+wrapIdbValue.replaceTraps((oldTraps) => (Object.assign(Object.assign({}, oldTraps), { get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver), has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop) })));
 
 exports.unwrap = wrapIdbValue.unwrap;
 exports.wrap = wrapIdbValue.wrap;
