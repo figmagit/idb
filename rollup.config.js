@@ -15,7 +15,7 @@ export default async function ({ watch }) {
   // Main
   builds.push({
     plugins: [simpleTS('test', { watch })],
-    input: ['src/index.ts', 'src/async-iterators.ts'],
+    input: ['src/index.ts'],
     output: [
       {
         dir: 'build/esm/',
@@ -47,21 +47,6 @@ export default async function ({ watch }) {
     },
   });
 
-  // Minified iife including iteration
-  builds.push({
-    input: './with-async-ittr.js',
-    plugins: [
-      terser({
-        compress: { ecma: 2019 },
-      }),
-    ],
-    output: {
-      file: 'build/iife/with-async-ittr-min.js',
-      format: 'iife',
-      name: 'idb',
-    },
-  });
-
   // Tests
   if (!process.env.PRODUCTION) {
     builds.push({
@@ -87,7 +72,6 @@ export default async function ({ watch }) {
         'test/index.ts',
         'test/main.ts',
         'test/open.ts',
-        'test/iterate.ts',
       ],
       output: {
         dir: 'build/test',

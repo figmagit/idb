@@ -239,6 +239,8 @@ while (cursor) {
 
 ## Async iterators
 
+_Figma modification: Support has been removed entirely_
+
 Async iterator support isn't included by default (Edge doesn't support them). To include them, import `idb/with-async-ittr.js` instead of `idb` (this increases the library size to ~1.3k brotli'd):
 
 ```js

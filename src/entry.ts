@@ -648,24 +648,6 @@ export interface IDBPObjectStore<
     value: StoreValue<DBTypes, StoreName>,
     key?: StoreKey<DBTypes, StoreName> | IDBKeyRange,
   ): Promise<StoreKey<DBTypes, StoreName>>;
-  /**
-   * Iterate over the store.
-   */
-  [Symbol.asyncIterator](): AsyncIterableIterator<
-    IDBPCursorWithValueIteratorValue<DBTypes, TxStores, StoreName>
-  >;
-  /**
-   * Iterate over the records matching the query.
-   *
-   * @param query If null, all records match.
-   * @param direction
-   */
-  iterate(
-    query?: StoreKey<DBTypes, StoreName> | IDBKeyRange,
-    direction?: IDBCursorDirection,
-  ): AsyncIterableIterator<
-    IDBPCursorWithValueIteratorValue<DBTypes, TxStores, StoreName>
-  >;
 }
 
 type IDBPIndexExtends = Omit<
@@ -765,26 +747,6 @@ export interface IDBPIndex<
     query?: IndexKey<DBTypes, StoreName, IndexName> | IDBKeyRange,
     direction?: IDBCursorDirection,
   ): Promise<IDBPCursor<DBTypes, TxStores, StoreName, IndexName> | null>;
-  /**
-   * Iterate over the index.
-   */
-  [Symbol.asyncIterator](): AsyncIterableIterator<
-    IDBPCursorWithValueIteratorValue<DBTypes, TxStores, StoreName, IndexName>
-  >;
-  /**
-   * Iterate over the records matching the query.
-   *
-   * Resolves with null if no matches are found.
-   *
-   * @param query If null, all records match.
-   * @param direction
-   */
-  iterate(
-    query?: IndexKey<DBTypes, StoreName, IndexName> | IDBKeyRange,
-    direction?: IDBCursorDirection,
-  ): AsyncIterableIterator<
-    IDBPCursorWithValueIteratorValue<DBTypes, TxStores, StoreName, IndexName>
-  >;
 }
 
 type IDBPCursorExtends = Omit<
@@ -859,12 +821,6 @@ export interface IDBPCursor<
   update(
     value: StoreValue<DBTypes, StoreName>,
   ): Promise<StoreKey<DBTypes, StoreName>>;
-  /**
-   * Iterate over the cursor.
-   */
-  [Symbol.asyncIterator](): AsyncIterableIterator<
-    IDBPCursorIteratorValue<DBTypes, TxStores, StoreName, IndexName>
-  >;
 }
 
 type IDBPCursorIteratorValueExtends<
@@ -924,12 +880,6 @@ export interface IDBPCursorWithValue<
    * The value of the current item.
    */
   readonly value: StoreValue<DBTypes, StoreName>;
-  /**
-   * Iterate over the cursor.
-   */
-  [Symbol.asyncIterator](): AsyncIterableIterator<
-    IDBPCursorWithValueIteratorValue<DBTypes, TxStores, StoreName, IndexName>
-  >;
 }
 
 // Some of that sweeeeet Java-esque naming.
